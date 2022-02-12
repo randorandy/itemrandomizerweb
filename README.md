@@ -5,6 +5,10 @@ https://strotlog.github.io/randoxrotation/
 
 This is the casual logic version
 
+How I use:
+console: dotnet run
+browser: localhost:8888
+
 ### Information
 
 This is a beta version used for testing new patches and item logic, have fun but expect that things can be broken at times.
