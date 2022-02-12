@@ -8,6 +8,7 @@ This is the casual logic version
 * How I use:
 * console: dotnet run
 * browser: localhost:8888
+* for now, use the "full" option for the current "casual" logic (and it is full rando, not m/m)
 
 ### Information
 
