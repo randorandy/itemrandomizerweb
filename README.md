@@ -1,4 +1,9 @@
-# Super Metroid Item Randomizer
+# Super Metroid Item Randomizer for ROTATION
+
+ROMs created with this tool (speedrun) must be rotated with strotlog's web tool here:
+https://strotlog.github.io/randoxrotation/
+
+This is the casual logic version
 
 ### Information
 
