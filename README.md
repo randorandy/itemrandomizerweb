@@ -1,13 +1,13 @@
 # Super Metroid Item Randomizer for ROTATION
 
 ROMs created with this tool (speedrun) must be rotated with strotlog's web tool here:
-https://strotlog.github.io/randoxrotation/
+* https://strotlog.github.io/randoxrotation/
 
 This is the casual logic version
 
-How I use:
-console: dotnet run
-browser: localhost:8888
+* How I use:
+* console: dotnet run
+* browser: localhost:8888
 
 ### Information
 
