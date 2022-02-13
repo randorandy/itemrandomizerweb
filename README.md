@@ -1,6 +1,6 @@
 # Super Metroid Item Randomizer for ROTATION
 
-ROMs created with this tool (speedrun) must be rotated with strotlog's web tool here:
+ROMs created with this tool must be rotated with strotlog's web tool here:
 * https://strotlog.github.io/randoxrotation/
 
 This is the casual logic version
@@ -8,34 +8,11 @@ This is the casual logic version
 * How I use:
 * console: dotnet run
 * browser: localhost:8888
-* for now, use the "full" option for the current "casual" logic (and it is full rando, not m/m)
+* for now, use the "full" option when generating the rom for this logic (and it is full rando, not m/m)
 
-### Information
-
-This is a beta version used for testing new patches and item logic, have fun but expect that things can be broken at times.
-**Huge shoutout and thanks to Dessyreqt for his work on the randomizer, without that this would not be a thing at all.**
-You can find his randomizer here: http://dessyreqt.github.io/smrandomizer/
-
-Changes from the vanilla game and other notes:
-* Items are randomized in two pools: Major items/Reserves/E-tanks in one, and the ammo packs in another.
-* There is on exception: The e-tank at Hi-Jump is no longer a major item location, it has been moved to the right super missile pack location in Wrecked Ship
-* The door into the construction zone (blue brinstar ceiling e-tank room) is now a Blue door and will have zebes activated when you enter it so you can check the items there right away.
-* The red tower elevator room's yellow door is blue to prevent softlocks
-* Gravity no longer protects you from enviromental damage (heat, lava, acid, spikes). As a side effect, varia protects you from the same sources of damage twice as much as it normally would
-* Because of the above change, Varia will never be in Lower Norfair
-* Some cutscenes have been removed or shortened.
-* Golden 4 Cutscene is eliminated, if you killed all four bosses, the way to Tourian is open immediately upon entering
-* Suit animation cutscenes are gone, so it doesn't place you in the middle of the screen, potentially softlocking you in solid blocks
-* You will no longer lose blue speed echoes while taking heat damage
-* S/T beam is disabled
-* GT Code is disabled
-* The Intro sequence and Ceres station are no longer in the game, you instead start directly on Zebes from a blank file.
-
-### How to use
-
-* Install .NET Core 2
-* Clone this repo
-* Run: dotnet restore
-* Run: dotnet run
-* Connect to port 8080 on your server
-* Have fun!
+Notes about this logic:
+* The first four available locations that require nothing else are Morph, Ceiling E, Beta Missle, and 230 missile. Later morph can be made available with early screw.
+* Basic hellruns can be required, but a screen's worth of lava requires varia and E.
+* Acid always allows both suits to be available. This *should* never put a suit in acid, but I have seen unintended exceptions.
+* Suitless Maridia consists of getting to Mama Turtle and Crab Supers with Hi Jump and no Gravity. For the rest of Maridia, Gravity will be available.
+* Lower Norfair will always require Varia, Gravity, Space Jump, and Screw attack. Therefore, it is intended that those items will not appear in LN.
