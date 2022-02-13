@@ -16,5 +16,6 @@ Notes about this logic:
 * Acid always allows both suits to be available. This *should* never put a suit in acid, but I have seen unintended exceptions.
 * Suitless Maridia consists of getting to Mama Turtle and Crab Supers with Hi Jump and no Gravity. For the rest of Maridia, Gravity will be available.
 * Lower Norfair will always require Varia, Gravity, Space Jump, and Screw attack. Therefore, it is intended that those items will not appear in LN.
+* Infinite bomb jumping is presumed, and can be an intended escape from rooms such as Phantoon. Underwater bomb jumping is not logically required.
 
 Removed total's text from the readme
