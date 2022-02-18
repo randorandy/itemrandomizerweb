@@ -767,9 +767,6 @@ module RustyRandomizer =
         let mutable newItems = items
         let mutable newItemLocations = itemLocations
         let mutable newItemPool = itemPool
-
-        // Place Morph at one of the earliest locations so that it's always accessible
-        //prefill rnd Morph &newItems &newItemLocations &newItemPool locationPool
         
         // Place either a super or a missile to open up BT's location 
         //match rnd.Next(2) with
@@ -779,14 +776,11 @@ module RustyRandomizer =
         // Next step is to place items that opens up access to breaking bomb blocks
         // by placing either Screw/Speed/Bomb or just a PB pack early.
         // One PB pack will be placed after filling with other items so that there's at least on accessible
-        match rnd.Next(12) with
+        match rnd.Next(7) with
         | 0 ->                          prefill rnd Missile &newItems &newItemLocations &newItemPool locationPool
                                         prefill rnd ScrewAttack &newItems &newItemLocations &newItemPool locationPool
                                         prefill rnd PowerBomb &newItems &newItemLocations &newItemPool locationPool
         | 1 ->                          prefill rnd Missile &newItems &newItemLocations &newItemPool locationPool
-                                        prefill rnd ScrewAttack &newItems &newItemLocations &newItemPool locationPool
-                                        prefill rnd PowerBomb &newItems &newItemLocations &newItemPool locationPool
-        | 2 ->                          prefill rnd Missile &newItems &newItemLocations &newItemPool locationPool
                                         prefill rnd Bomb &newItems &newItemLocations &newItemPool locationPool
                                         prefill rnd PowerBomb &newItems &newItemLocations &newItemPool locationPool
         | _ ->                          prefill rnd PowerBomb &newItems &newItemLocations &newItemPool locationPool
@@ -795,6 +789,9 @@ module RustyRandomizer =
         if not (List.exists (fun i -> i.Type = Super) newItems) then
             prefill rnd Super &newItems &newItemLocations &newItemPool locationPool
         
+        // Place Morph at one of the NEXT locations so that it's always accessible
+        prefill rnd Morph &newItems &newItemLocations &newItemPool locationPool
+
         // Save the prefilled items into a new list to be used later
         let prefilledItems = newItems
 
@@ -817,11 +814,11 @@ module RustyRandomizer =
 
 //morph first here?
 
-        let firstItem = match rnd.Next(2) with
-                        | 0 -> List.find (fun i -> i.Type = Morph) shuffledItems
-                        | _ -> List.find (fun i -> i.Type = Morph) shuffledItems
+        //let firstItem = match rnd.Next(2) with
+        //                | 0 -> List.find (fun i -> i.Type = Morph) shuffledItems
+        //                | _ -> List.find (fun i -> i.Type = Morph) shuffledItems
 
-        let shuffledItems = firstItem :: List.filter (fun i -> i.Type <> firstItem.Type) shuffledItems
+        //let shuffledItems = firstItem :: List.filter (fun i -> i.Type <> firstItem.Type) shuffledItems
 
         // Place the rest of progression items randomly
         let (progressItems, progressItemLocations, progressItemPool) = generateAssumedItems prefilledItems newItems newItemLocations shuffledItems weightedLocations
