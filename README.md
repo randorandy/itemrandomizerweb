@@ -3,7 +3,7 @@
 ROMs created with this tool must be rotated with strotlog's web tool here:
 * https://strotlog.github.io/randoxrotation/
 
-This is the casual logic version
+There is casual and tournament (hard) logic now!
 
 * How I use:
 * console: dotnet run
