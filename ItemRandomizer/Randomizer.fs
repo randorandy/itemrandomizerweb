@@ -1,4 +1,4 @@
-﻿namespace ItemRandomizer
+namespace ItemRandomizer
 
 module Randomizer =
     open Types
@@ -84,18 +84,13 @@ module Randomizer =
         
         let locationPool = match difficulty with
                             | Difficulty.Casual -> CasualLocations.AllLocations
-                            | Difficulty.Normal -> Locations.AllLocations
-                            | Difficulty.Hard -> HardLocations.AllLocations
                             | Difficulty.Tournament -> TournamentLocations.AllLocations
-                            | Difficulty.Open -> OpenLocations.AllLocations
-                            | Difficulty.Full -> TournamentLocations.AllLocations
                             | _ -> Locations.AllLocations
 
         let generateItems = match difficulty with
-                             | Difficulty.Hard -> SparseRandomizer.generateItems
-                             | Difficulty.Open -> OpenRandomizer.generateItems
-                             | Difficulty.Tournament -> NewRandomizer.generateItems
-                             | Difficulty.Full -> FullRandomizer.generateItems
+                        // could delete this top line if it fails
+                             | Difficulty.Casual -> FullRandomizer.generateItems
+                             | Difficulty.Tournament -> FullRandomizer.generateItems
                              | _ -> DefaultRandomizer.generateItems
         
         // Get a random animal patch
