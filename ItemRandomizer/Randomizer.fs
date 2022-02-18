@@ -90,7 +90,7 @@ module Randomizer =
         let generateItems = match difficulty with
                         // could delete this top line if it fails
                              | Difficulty.Casual -> FullRandomizer.generateItems
-                             | Difficulty.Tournament -> FullRandomizer.generateItems
+                             | Difficulty.Tournament -> RustyRandomizer.generateItems
                              | _ -> DefaultRandomizer.generateItems
         
         // Get a random animal patch
