@@ -1,0 +1,2 @@
+This is a file in the logs folder
+So that it will exist in the future
