@@ -467,9 +467,7 @@ module CasualLocations =
                 Class = Minor;
                 Address = 0x78836;
                 Visibility = Visible;
-                Available = fun items -> canUsePowerBombs items &&
-                                         (haveItem items Gravity ||
-                                            haveItem items HiJump);
+                Available = fun items -> canUsePowerBombs items;
             };
             {
                 Area = Brinstar;
@@ -477,9 +475,7 @@ module CasualLocations =
                 Class = Minor;
                 Address = 0x7883C;
                 Visibility = Hidden;
-                Available = fun items -> canUsePowerBombs items &&
-                                         (haveItem items Gravity ||
-                                            haveItem items HiJump);
+                Available = fun items -> canUsePowerBombs items;
             };
             {
                 Area = Brinstar;
