@@ -85,12 +85,14 @@ module Randomizer =
         let locationPool = match difficulty with
                             | Difficulty.Casual -> CasualLocations.AllLocations
                             | Difficulty.Tournament -> TournamentLocations.AllLocations
+                            | Difficulty.Full -> TournamentLocations.AllLocations
                             | _ -> Locations.AllLocations
 
         let generateItems = match difficulty with
                         // could delete this top line if it fails
                              | Difficulty.Casual -> FullRandomizer.generateItems
                              | Difficulty.Tournament -> RustyRandomizer.generateItems
+                             | Difficulty.Full -> LateMorphRandomizer.generateItems
                              | _ -> DefaultRandomizer.generateItems
         
         // Get a random animal patch
