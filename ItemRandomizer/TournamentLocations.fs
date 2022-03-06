@@ -976,7 +976,8 @@ module TournamentLocations =
                 Class = Minor;
                 Address = 0x7C43D;
                 Visibility = Visible;
-                Available = fun items -> canAccessRedBrinstar items;
+                Available = fun items -> canAccessRedBrinstar items &&
+                                            haveItem items Morph;
             };
             {
                 Area = Maridia;
@@ -998,9 +999,9 @@ module TournamentLocations =
                 Visibility = Hidden;
                 Available = fun items -> canAccessRedBrinstar items &&
                                          (haveItem items SpeedBooster ||
-                                         haveItem items SpaceJump ||
-                                         canUseBombs items ||
-                                         haveItem items HiJump);
+                                            haveItem items SpaceJump ||
+                                            canUseBombs items ||
+                                            haveItem items HiJump);
             };
             {
                 Area = Maridia;
@@ -1008,7 +1009,8 @@ module TournamentLocations =
                 Class = Minor;
                 Address = 0x7C4AF;
                 Visibility = Visible;
-                Available = fun items -> canAccessRedBrinstar items;
+                Available = fun items -> canAccessRedBrinstar items &&
+                                            haveItem items Morph;
             };
             {
                 Area = Maridia;
@@ -1016,7 +1018,8 @@ module TournamentLocations =
                 Class = Minor;
                 Address = 0x7C4B5;
                 Visibility = Visible;
-                Available = fun items -> canAccessRedBrinstar items;
+                Available = fun items -> canAccessRedBrinstar items &&
+                                            haveItem items Morph;
             };
             {
                 Area = Maridia;
@@ -1025,10 +1028,11 @@ module TournamentLocations =
                 Address = 0x7C533;
                 Visibility = Visible;
                 Available = fun items -> canAccessRedBrinstar items &&
-                                         (haveItem items Gravity ||
-                                            haveItem items HiJump ||
-                                            canUseBombs items ||
-                                            haveItem items Ice);
+                                            haveItem items Morph &&
+                                            (haveItem items Gravity ||
+                                                haveItem items HiJump ||
+                                                canUseBombs items ||
+                                                haveItem items Ice);
             };
             {
                 Area = Maridia;
