@@ -78,13 +78,13 @@ let randomizerPost (r:HttpRequest) =
                 let patches = List.filter (fun (p:Types.Patch) -> ((p.Difficulty = difficulty || p.Difficulty = Types.Difficulty.Any) && p.Default)) Patches.RomPatches
                 let (seed, binaryData) = Randomizer.Randomize parsedSeed difficulty true "" bytes ipsPatches patches
                 let newFileName = sprintf "Rotation Randomizer %s%d.sfc" (match difficulty with
-                                                                        | Types.Difficulty.Casual -> "CX"
-                                                                        | Types.Difficulty.Normal -> "X"
-                                                                        | Types.Difficulty.Hard -> "HX"
-                                                                        | Types.Difficulty.Tournament -> "TX"
-                                                                        | Types.Difficulty.Open -> "OX"
-                                                                        | Types.Difficulty.Full -> "FX"
-                                                                        | _ -> "X") seed
+                                                                          | Types.Difficulty.Casual -> "CX"
+                                                                          | Types.Difficulty.Normal -> "X"
+                                                                          | Types.Difficulty.Hard -> "HX"
+                                                                          | Types.Difficulty.Tournament -> "TX"
+                                                                          | Types.Difficulty.Open -> "OX"
+                                                                          | Types.Difficulty.Full -> "FX"
+                                                                          | _ -> "X") seed
                                                                                         
                 if File.Exists(file.tempFilePath) then File.Delete(file.tempFilePath) else ()
                 Writers.setMimeType("application/octet-stream")
