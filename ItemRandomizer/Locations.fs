@@ -2,6 +2,13 @@
 module Locations =
     open Types
 
+// open: the folder in console
+// type: dotnet run
+// navigate to: localhost:8888
+
+// This is the Master otherRotation logic
+// version 0.3 of total's updated Aug 20 2022 by ironrusty
+
     // Functions to check if we have a specific item
     let haveItem items (itemType:ItemType) =
         List.exists (fun (item:Item) -> item.Type = itemType) items
@@ -17,9 +24,7 @@ module Locations =
         haveItem items Varia
 
     // Combined checks to see if we can perform an action needed to access locations
-    let canHellRun items = 
-        energyReserveCount items >= 3 ||
-        heatProof items
+    
 
     let canFly items = (haveItem items Morph && haveItem items Bomb) || haveItem items SpaceJump
     let canUseBombs items = haveItem items Morph && haveItem items Bomb
@@ -39,75 +44,166 @@ module Locations =
         itemCount items Missile >= 2 &&
         itemCount items Super >= 2 &&
         itemCount items PowerBomb >= 3
-    
-    let canEnterAndLeaveGauntlet items = 
-        canUseBombs items || 
-        (canUsePowerBombs items && itemCount items PowerBomb >= 2) || 
-        haveItem items ScrewAttack
+
+    let canCrystalFlashTwice items = 
+        itemCount items Missile >= 4 &&
+        itemCount items Super >= 4 &&
+        itemCount items PowerBomb >= 5
+
+    let canHellRunTwo items = 
+        energyReserveCount items >= 3 ||
+        (energyReserveCount items >= 2 && canCrystalFlash items) ||
+        heatProof items
+
+    let canHellRunThree items = 
+        energyReserveCount items >= 3 ||
+        (energyReserveCount items >= 2 && canCrystalFlash items) ||
+        heatProof items
+
+    let canHellRunFour items = 
+        energyReserveCount items >= 4 ||
+        (energyReserveCount items >= 3 && canCrystalFlash items) ||
+        heatProof items
+
+    let canHellRunFive items = 
+        energyReserveCount items >= 5 ||
+        (energyReserveCount items >= 4 && canCrystalFlash items) ||
+        heatProof items
+
+    let canHellRunSix items = 
+        energyReserveCount items >= 6 ||
+        (energyReserveCount items >= 4 && canCrystalFlash items) ||
+        (energyReserveCount items >= 3 && canCrystalFlashTwice items) ||
+        heatProof items
+
+    let canHellRunSeven items = 
+        energyReserveCount items >= 7 ||
+        (energyReserveCount items >= 5 && canCrystalFlash items) ||
+        (energyReserveCount items >= 4 && canCrystalFlashTwice items) ||
+        heatProof items
+
+    let canHellRunEight items = 
+        energyReserveCount items >= 8 ||
+        (energyReserveCount items >= 5 && canCrystalFlash items) ||
+        (energyReserveCount items >= 4 && canCrystalFlashTwice items) ||
+        heatProof items
+
+    let canHellRunTwelve items = 
+        energyReserveCount items >= 12 ||
+        (energyReserveCount items >= 7 && canCrystalFlash items) ||
+        (energyReserveCount items >= 5 && canCrystalFlashTwice items) ||
+        heatProof items
     
     let canPassBombPassages items =
-        canUseBombs items || 
-        canUsePowerBombs items
+           canUseBombs items || 
+           canUsePowerBombs items
+
+    let canEnterAndLeaveGauntlet items =
+        canPassBombPassages items &&
+        haveItem items Varia &&
+        haveItem items Gravity &&
+        ((haveItem items ScrewAttack && energyReserveCount items >= 4) ||
+            (canUsePowerBombs items && energyReserveCount items >= 8))
     
     let canAccessRedBrinstar items =
-        haveItem items Super && 
-            ((canDestroyBombWalls items && haveItem items Morph) || 
+        haveItem items Super &&
+        haveItem items Morph &&
+            (canDestroyBombWalls items || 
              canUsePowerBombs items)
+    // note, morph is not required to enter red brin
+    // supers (traditional) or power bombs (meme route) required
     
     let canAccessKraid items = 
         canAccessRedBrinstar items &&
-        canPassBombPassages items
+        (haveItem items HiJump ||
+            canFly items) &&
+        (canPassBombPassages items ||
+            (haveItem items Morph &&
+             haveItem items ScrewAttack &&
+             haveItem items SpringBall))
     
     let canAccessWs items = 
         canUsePowerBombs items && 
-        haveItem items Super
-    
+        haveItem items Super &&
+        (haveItem items SpringBall ||
+            haveItem items HiJump ||
+            haveItem items SpeedBooster ||
+            haveItem items Gravity ||
+            canUseBombs items)
+        // moat options or forgotten highway with UWIBJ
+
+    let canDefeatPhantoon items =
+        canAccessWs items
+
+    let canPassAttic items =
+        // also considers upper ocean HJB or gravity
+        canDefeatPhantoon items 
+
     let canAccessHeatedNorfair items =
+        // that is bubble mt thru cathedral
         canAccessRedBrinstar items &&
-            ((canFly items || haveItem items HiJump) &&
-             (canHellRun items))
+        ((canHellRunSix items && haveItem items HiJump) ||
+            (haveItem items SpeedBooster && energyReserveCount items >= 2))
     
     let canAccessCrocomire items =
-        canAccessHeatedNorfair items ||
-            (canAccessKraid items &&
-             canUsePowerBombs items &&
-             haveItem items SpeedBooster &&
-             canHellRun items)
+        (canAccessHeatedNorfair items &&
+            haveItem items Wave &&
+            canPassBombPassages items &&
+            energyReserveCount items >= 3 &&
+            (haveItem items Missile ||
+                haveItem items Charge)) ||
+            (canAccessRedBrinstar items &&
+                haveItem items Varia &&
+                haveItem items SpeedBooster &&
+                energyReserveCount items >= 1)
+        // Can enter from wave gate or speed croc speedway
     
     let canAccessLowerNorfair items = 
         canAccessHeatedNorfair items &&
         canUsePowerBombs items &&
-        haveItem items Varia &&
-            (haveItem items HiJump ||
-             haveItem items Gravity)
+        haveItem items Varia
+        // leave Varia in for now...
     
     let canPassWorstRoom items =
+        // which is now ampitheater
         canAccessLowerNorfair items &&
-            (canFly items ||
-             haveItem items Ice ||
-             haveItem items SpeedBooster)
+        ((haveItem items HiJump && haveItem items SpeedBooster) ||
+            haveItem items SpaceJump ||
+            (haveItem items HiJump &&
+                haveItem items Gravity &&
+                energyReserveCount items >= 5))
+        //with gravity + HJB, grav jump in acid!!
 
     let canAccessOuterMaridia items = 
         canAccessRedBrinstar items &&
-        canUsePowerBombs items &&
-            (haveItem items Gravity ||
-             (haveItem items HiJump && haveItem items Ice))
-    
-    let canAccessInnerMaridia items = 
-        canAccessRedBrinstar items &&
-        canUsePowerBombs items &&
-            (haveItem items Gravity ||
-             (haveItem items HiJump && haveItem items Ice && haveItem items Grapple))
-    
-    let canDefeatBotwoon items = 
-        canAccessInnerMaridia items &&
-        (haveItem items Ice || haveItem items SpeedBooster)
+        canUsePowerBombs items
+        //break the tube
 
-    let canDefeatDraygon items = 
-        canDefeatBotwoon items &&
-            (haveItem items Gravity ||
-                ((haveItem items Grapple || canCrystalFlash items) &&
-                 (haveItem items SpringBall || haveItem items XRay)))
+    let canAccessInnerMaridia items =
+        //climb Mt. Everest
+        canAccessOuterMaridia items &&
+        (haveItem items HiJump ||
+            haveItem items Grapple ||
+            haveItem items Gravity ||
+            canUseBombs items)
+        // UWIBJ included
+    
+    let canDoSuitlessMaridia items =
+        // NA for now
+         (haveItem items HiJump && (haveItem items Ice || haveItem items SpringBall) && haveItem items Grapple)
+
+    let canDefeatBotwoon items =
+        // Let's consider defeating botwoon OR sand bypass
+        canAccessInnerMaridia items &&
+            (haveItem items Charge ||
+                haveItem items Gravity ||
+                (haveItem items HiJump && haveItem items SpringBall) ||
+                canUseBombs items)
+        // can do HJB + SB in Master, and UWIBJ
+
+    let canDefeatDraygon items =
+        canDefeatBotwoon items;
+            //escape is free
 
     // Item Locations
     let AllLocations = 
@@ -120,7 +216,8 @@ module Locations =
                 Visibility = Visible;
                 Available = fun items ->
                     canUsePowerBombs items &&
-                    (haveItem items SpeedBooster || canFly items);
+                    (canFly items ||
+                        haveItem items SpeedBooster);
             };
             {
                 Area = Crateria;
@@ -136,7 +233,7 @@ module Locations =
                 Class = Minor;
                 Address = 0x781EE;
                 Visibility = Hidden;
-                Available = fun items -> canAccessWs items;
+                Available = fun items -> canPassAttic items;
             };
             {
                 Area = Crateria;
@@ -144,7 +241,7 @@ module Locations =
                 Class = Minor;
                 Address = 0x781F4;
                 Visibility = Visible;
-                Available = fun items -> canAccessWs items;
+                Available = fun items -> canPassAttic items;
             };
             {
                 Area = Crateria;
@@ -152,7 +249,7 @@ module Locations =
                 Class = Minor
                 Address = 0x78248;
                 Visibility = Visible;
-                Available = fun items -> canAccessWs items;
+                Available = fun items -> canUsePowerBombs items;
             };
             {
                 Area = Crateria;
@@ -168,7 +265,7 @@ module Locations =
                 Class = Minor;
                 Address = 0x783EE;
                 Visibility = Visible;
-                Available = fun items -> canDestroyBombWalls items;
+                Available = fun items -> canPassBombPassages items;
             };
             {
                 Area = Crateria;
@@ -176,7 +273,8 @@ module Locations =
                 Address = 0x78404;
                 Class = Major;
                 Visibility = Chozo;
-                Available = fun items -> haveItem items Morph && canOpenRedDoors items;
+                Available = fun items -> haveItem items Morph &&
+                                            canOpenRedDoors items;
             };
             {
                 Area = Crateria;
@@ -184,7 +282,7 @@ module Locations =
                 Class = Major;
                 Address = 0x78432;
                 Visibility = Visible;
-                Available = fun items -> canDestroyBombWalls items || haveItem items SpeedBooster
+                Available = fun items -> canDestroyBombWalls items;
             };
             {
                 Area = Crateria;
@@ -192,7 +290,7 @@ module Locations =
                 Class = Minor;
                 Address = 0x78464;
                 Visibility = Visible;
-                Available = fun items -> canEnterAndLeaveGauntlet items && canPassBombPassages items;
+                Available = fun items -> canEnterAndLeaveGauntlet items;
             };
             {
                 Area = Crateria;
@@ -200,7 +298,7 @@ module Locations =
                 Class = Minor;
                 Address = 0x7846A;
                 Visibility = Visible;
-                Available = fun items -> canEnterAndLeaveGauntlet items && canPassBombPassages items;
+                Available = fun items -> canEnterAndLeaveGauntlet items;
             };
             {
                 Area = Crateria;
@@ -209,8 +307,7 @@ module Locations =
                 Address = 0x78478;                
                 Visibility = Visible;
                 Available = fun items -> canUsePowerBombs items && 
-                                         haveItem items SpeedBooster && 
-                                         (haveItem items ETank || haveItem items Varia || haveItem items Gravity)
+                                         haveItem items SpeedBooster; 
             };
             {
                 Area = Crateria;
@@ -218,7 +315,7 @@ module Locations =
                 Class = Minor;
                 Address = 0x78486;
                 Visibility = Visible;
-                Available = fun items -> canPassBombPassages items;
+                Available = fun items -> canDestroyBombWalls items;
             };
             {
                 Area = Brinstar;
@@ -226,7 +323,10 @@ module Locations =
                 Class = Minor;
                 Address = 0x784AC;
                 Visibility = Chozo;
-                Available = fun items -> canUsePowerBombs items;
+                Available = fun items -> canUsePowerBombs items &&
+                                         (canFly items ||
+                                            haveItem items HiJump ||
+                                            haveItem items SpeedBooster); 
             };
             {
                 Area = Brinstar;
@@ -234,7 +334,8 @@ module Locations =
                 Class = Minor;
                 Address = 0x784E4;
                 Visibility = Chozo;
-                Available = fun items -> canPassBombPassages items && haveItem items Super;
+                Available = fun items -> canDestroyBombWalls items &&
+                                         haveItem items Super;
             };
             {
                 Area = Brinstar;
@@ -242,7 +343,9 @@ module Locations =
                 Class = Minor;
                 Address = 0x78518;
                 Visibility = Visible;
-                Available = fun items -> canPassBombPassages items && canOpenRedDoors items;
+                Available = fun items -> canDestroyBombWalls items &&
+                                         haveItem items Morph &&
+                                         canOpenRedDoors items;
             };
             {
                 Area = Brinstar;
@@ -250,7 +353,9 @@ module Locations =
                 Class = Minor;
                 Address = 0x7851E;
                 Visibility = Visible;
-                Available = fun items -> (haveItem items SpeedBooster || canDestroyBombWalls items) && canOpenRedDoors items && (haveItem items Morph || haveItem items SpeedBooster);
+                Available = fun items -> canDestroyBombWalls items &&
+                                         haveItem items Morph &&
+                                         canOpenRedDoors items;
             };
             {
                 Area = Brinstar;
@@ -258,7 +363,9 @@ module Locations =
                 Class = Major;
                 Address = 0x7852C;
                 Visibility = Chozo;
-                Available = fun items -> (haveItem items SpeedBooster || canDestroyBombWalls items) && canOpenRedDoors items && (haveItem items Morph || haveItem items SpeedBooster);
+                Available = fun items -> canDestroyBombWalls items &&
+                                         haveItem items Morph &&
+                                         canOpenRedDoors items;
             };
             {
                 Area = Brinstar;
@@ -266,7 +373,9 @@ module Locations =
                 Class = Minor;
                 Address = 0x78532;
                 Visibility = Hidden;
-                Available = fun items -> canPassBombPassages items && canOpenRedDoors items;
+                Available = fun items -> canDestroyBombWalls items &&
+                                         haveItem items Morph &&
+                                         canOpenRedDoors items;
             };
             {
                 Area = Brinstar;
@@ -274,7 +383,9 @@ module Locations =
                 Class = Minor;
                 Address = 0x78538;
                 Visibility = Visible;
-                Available = fun items -> canDestroyBombWalls items && canOpenRedDoors items && haveItem items Morph;
+                Available = fun items -> canDestroyBombWalls items &&
+                                         haveItem items Morph &&
+                                         canOpenRedDoors items;
             };
             {
                 Area = Brinstar;
@@ -282,7 +393,8 @@ module Locations =
                 Class = Minor;
                 Address = 0x78608;
                 Visibility = Visible;
-                Available = fun items -> (canDestroyBombWalls items && canOpenRedDoors items) ||
+                Available = fun items -> (canDestroyBombWalls items &&
+                                            canOpenRedDoors items) ||
                                          canUsePowerBombs items;
             };
             {
@@ -291,7 +403,8 @@ module Locations =
                 Class = Minor;
                 Address = 0x7860E;
                 Visibility = Visible;
-                Available = fun items -> (canDestroyBombWalls items && canOpenRedDoors items) ||
+                Available = fun items -> (canDestroyBombWalls items &&
+                                            canOpenRedDoors items) ||
                                          canUsePowerBombs items;
             };
             {
@@ -300,7 +413,8 @@ module Locations =
                 Class = Major;
                 Address = 0x78614;
                 Visibility = Chozo;
-                Available = fun items -> (canPassBombPassages items && canOpenRedDoors items) ||
+                Available = fun items -> (canPassBombPassages items &&
+                                            canOpenRedDoors items) ||
                                          canUsePowerBombs items;
             };
             {
@@ -309,7 +423,10 @@ module Locations =
                 Class = Minor;
                 Address = 0x7865C;
                 Visibility = Visible;
-                Available = fun items -> canUsePowerBombs items && haveItem items Super;
+                Available = fun items -> ((canPassBombPassages items &&
+                                            canOpenRedDoors items) ||
+                                            canUsePowerBombs items) &&
+                                            haveItem items Super;
             };
             {
                 Area = Brinstar;
@@ -317,7 +434,9 @@ module Locations =
                 Class = Minor;
                 Address = 0x78676;
                 Visibility = Visible;
-                Available = fun items -> (canPassBombPassages items && canOpenGreenDoors items) || canUsePowerBombs items;
+                Available = fun items -> (canDestroyBombWalls items &&
+                                            canOpenGreenDoors items) ||
+                                         canUsePowerBombs items;
             };
             {
                 Area = Brinstar;
@@ -341,7 +460,7 @@ module Locations =
                 Address = 0x78798;
                 Class = Minor;
                 Visibility = Visible;
-                Available = fun items -> haveItem items Morph;
+                Available = fun items -> true;
             };
             {
                 Area = Brinstar;
@@ -365,7 +484,8 @@ module Locations =
                 Class = Minor;
                 Address = 0x787D0;
                 Visibility = Visible;
-                Available = fun items -> canUsePowerBombs items && canOpenGreenDoors items;
+                Available = fun items -> canUsePowerBombs items &&
+                                         canOpenGreenDoors items;
             };
             {
                 Area = Brinstar;
@@ -373,7 +493,9 @@ module Locations =
                 Class = Major;
                 Address = 0x787FA;
                 Visibility = Visible;
-                Available = fun items -> canUsePowerBombs items && canOpenRedDoors items && haveItem items SpeedBooster;
+                Available = fun items -> canUsePowerBombs items &&
+                                         canOpenRedDoors items &&
+                                         haveItem items SpeedBooster;
             };
             {
                 Area = Brinstar;
@@ -389,8 +511,11 @@ module Locations =
                 Class = Major;
                 Address = 0x78824;
                 Visibility = Visible;
-                Available = fun items -> canUsePowerBombs items &&
-                                         (haveItem items Wave || haveItem items Super);
+                Available = fun items -> haveItem items Wave &&
+                                         ((canPassBombPassages items &&
+                                            canOpenRedDoors items) ||
+                                                canUsePowerBombs items);
+                                    // apparently you can clip thru, no pbs
             };
             {
                 Area = Brinstar;
@@ -398,7 +523,7 @@ module Locations =
                 Class = Minor;
                 Address = 0x78836;
                 Visibility = Visible;
-                Available = fun items -> canOpenRedDoors items && canUsePowerBombs items;
+                Available = fun items -> canUsePowerBombs items;
             };
             {
                 Area = Brinstar;
@@ -406,7 +531,7 @@ module Locations =
                 Class = Minor;
                 Address = 0x7883C;
                 Visibility = Hidden;
-                Available = fun items -> canOpenRedDoors items && canUsePowerBombs items;
+                Available = fun items -> canUsePowerBombs items;
             };
             {
                 Area = Brinstar;
@@ -415,13 +540,8 @@ module Locations =
                 Address = 0x78876;
                 Visibility = Chozo;
                 Available = fun items ->canAccessRedBrinstar items && 
-                                        canUsePowerBombs items &&
-                                        (haveItem items Grapple ||
-                                         haveItem items SpaceJump ||
-                                         (haveItem items Varia && energyReserveCount items >= 4) ||
-                                         (haveItem items Gravity && energyReserveCount items >= 3) ||
-                                         (energyReserveCount items >= 6))
-                            
+                                        canUsePowerBombs items;
+                                        // bc supers req for red brin also
             };
             {
                 Area = Brinstar;
@@ -429,7 +549,9 @@ module Locations =
                 Class = Minor;
                 Address = 0x788CA;
                 Visibility = Visible;
-                Available = fun items -> canAccessRedBrinstar items && canUsePowerBombs items;
+                Available = fun items -> canAccessRedBrinstar items &&
+                                         canUsePowerBombs items;
+                                         // bc supers req for red brin also
             };
             {
                 Area = Brinstar;
@@ -437,7 +559,8 @@ module Locations =
                 Class = Minor;
                 Address = 0x7890E;
                 Visibility = Chozo;
-                Available = fun items -> canAccessRedBrinstar items && canUsePowerBombs items;
+                Available = fun items -> canAccessRedBrinstar items;
+                                         // anti softlock exit thru elevator
             };
             {
                 Area = Brinstar;
@@ -445,7 +568,8 @@ module Locations =
                 Class = Minor;
                 Address = 0x78914;
                 Visibility = Visible;
-                Available = fun items -> canAccessRedBrinstar items && canUsePowerBombs items;
+                Available = fun items -> canAccessRedBrinstar items &&
+                                         canUsePowerBombs items;
             };
             {
                 Area = Brinstar;
@@ -453,7 +577,9 @@ module Locations =
                 Class = Major;
                 Address = 0x7896E;
                 Visibility = Chozo;
-                Available = fun items -> canAccessRedBrinstar items && canPassBombPassages items;
+                Available = fun items -> canAccessRedBrinstar items &&
+                                         canPassBombPassages items;
+                                         // supers are included in red brin
             };
             {
                 Area = Brinstar;
@@ -469,7 +595,8 @@ module Locations =
                 Class = Minor;
                 Address = 0x789EC;
                 Visibility = Hidden;
-                Available = fun items -> canAccessKraid items && canUsePowerBombs items;
+                Available = fun items -> canAccessKraid items &&
+                                         canUsePowerBombs items;
             };
             {
                 Area = Brinstar;
@@ -493,8 +620,9 @@ module Locations =
                 Class = Major;
                 Address = 0x78B24;
                 Visibility = Chozo;
-                Available = fun items -> canAccessKraid items &&
-                                         (heatProof items || energyReserveCount items >= 2);
+                Available = fun items -> canAccessRedBrinstar items &&
+                                         canPassBombPassages items &&
+                                         canHellRunTwo items;
             };
             {
                 Area = Norfair;
@@ -502,9 +630,8 @@ module Locations =
                 Class = Minor;
                 Address = 0x78B46;
                 Visibility = Hidden;
-                Available = fun items -> canAccessKraid items && 
-                                         canUsePowerBombs items && 
-                                         canHellRun items;                                         
+                Available = fun items -> canAccessRedBrinstar items &&
+                                         canUsePowerBombs items;                                        
             };
             {
                 Area = Norfair;
@@ -520,7 +647,9 @@ module Locations =
                 Class = Major;
                 Address = 0x78BAC;
                 Visibility = Chozo;
-                Available = fun items -> canAccessRedBrinstar items;
+                Available = fun items -> canAccessRedBrinstar items &&
+                                         canDestroyBombWalls items;
+                                         // supers are included in red brin
             };
             {
                 Area = Norfair;
@@ -528,10 +657,7 @@ module Locations =
                 Class = Minor;
                 Address = 0x78BC0;
                 Visibility = Visible;
-                Available = fun items -> canAccessCrocomire items &&
-                                            (canFly items || 
-                                             haveItem items Grapple ||
-                                             (haveItem items HiJump && haveItem items SpeedBooster))
+                Available = fun items -> canAccessCrocomire items;
             };
             {
                 Area = Norfair;
@@ -540,6 +666,7 @@ module Locations =
                 Address = 0x78BE6;
                 Visibility = Visible;
                 Available = fun items -> canAccessRedBrinstar items;
+                                          // supers and a way in are included in red brin
             };
             {
                 Area = Norfair;
@@ -548,6 +675,9 @@ module Locations =
                 Address = 0x78BEC;
                 Visibility = Visible;
                 Available = fun items -> canAccessRedBrinstar items;
+                                         // supers are included in red brin
+                                         // also, some way of dealing with the critter
+                                         // whether by bombs, screw, or pbs
             };
             {
                 Area = Norfair;
@@ -556,6 +686,7 @@ module Locations =
                 Address = 0x78C04;
                 Visibility = Visible;
                 Available = fun items -> canAccessCrocomire items;
+                                         // supers are included
             };
             {
                 Area = Norfair;
@@ -564,6 +695,7 @@ module Locations =
                 Address = 0x78C14;
                 Visibility = Visible;
                 Available = fun items -> canAccessCrocomire items;
+                                        // check this without speed
             };
             {
                 Area = Norfair;
@@ -572,9 +704,9 @@ module Locations =
                 Address = 0x78C2A;
                 Visibility = Visible;
                 Available = fun items -> canAccessCrocomire items &&
-                                            (canFly items ||
-                                             haveItem items Grapple ||
-                                             haveItem items SpeedBooster);
+                                         (haveItem items SpaceJump ||
+                                            haveItem items Grapple ||
+                                            canUseBombs items);
             };
             {
                 Area = Norfair;
@@ -582,10 +714,7 @@ module Locations =
                 Class = Major;
                 Address = 0x78C36;
                 Visibility = Chozo;
-                Available = fun items -> canAccessCrocomire items &&
-                                            (canFly items ||
-                                             haveItem items Ice ||
-                                             haveItem items SpeedBooster);
+                Available = fun items -> canAccessCrocomire items;
             };
             {
                 Area = Norfair;
@@ -594,9 +723,8 @@ module Locations =
                 Address = 0x78C3E;
                 Visibility = Chozo;
                 Available = fun items -> canAccessHeatedNorfair items &&
-                                            (canFly items ||
-                                             haveItem items Grapple ||
-                                             haveItem items HiJump);
+                                         canHellRunSeven items;
+                                            //check
             };
             {
                 Area = Norfair;
@@ -605,9 +733,8 @@ module Locations =
                 Address = 0x78C44;
                 Visibility = Hidden;
                 Available = fun items -> canAccessHeatedNorfair items &&
-                                            (canFly items ||
-                                             haveItem items Grapple ||
-                                             haveItem items HiJump);
+                                         canHellRunSeven items;
+                                            //check
             };
             {
                 Area = Norfair;
@@ -615,10 +742,7 @@ module Locations =
                 Class = Minor;
                 Address = 0x78C52;
                 Visibility = Visible;
-                Available = fun items -> canAccessHeatedNorfair items &&
-                                            (canFly items ||
-                                             haveItem items Grapple ||
-                                             haveItem items HiJump);
+                Available = fun items -> canAccessHeatedNorfair items;
             };
             {
                 Area = Norfair;
@@ -626,7 +750,8 @@ module Locations =
                 Class = Minor;
                 Address = 0x78C66;
                 Visibility = Visible;
-                Available = fun items -> canAccessHeatedNorfair items;
+                Available = fun items -> canAccessHeatedNorfair items &&
+                                         canPassBombPassages items;
             };
             {
                 Area = Norfair;
@@ -634,7 +759,9 @@ module Locations =
                 Class = Minor;
                 Address = 0x78C74;
                 Visibility = Hidden;
-                Available = fun items -> canAccessHeatedNorfair items;
+                Available = fun items -> canAccessHeatedNorfair items &&
+                                         canHellRunFive items &&
+                                         canPassBombPassages items;
             };
             {
                 Area = Norfair;
@@ -642,7 +769,9 @@ module Locations =
                 Class = Major;
                 Address = 0x78C82;
                 Visibility = Chozo;
-                Available = fun items -> canAccessHeatedNorfair items;
+                Available = fun items -> canAccessHeatedNorfair items &&
+                                         canHellRunFive items &&
+                                         canPassBombPassages items;
             };
             {
                 Area = Norfair;
@@ -650,7 +779,8 @@ module Locations =
                 Class = Minor;
                 Address = 0x78CBC;
                 Visibility = Visible;
-                Available = fun items -> canAccessHeatedNorfair items;
+                Available = fun items -> canAccessHeatedNorfair items &&
+                                         canHellRunThree items;
             };
             {
                 Area = Norfair;
@@ -658,7 +788,8 @@ module Locations =
                 Class = Major;
                 Address = 0x78CCA;
                 Visibility = Chozo;
-                Available = fun items -> canAccessHeatedNorfair items;
+                Available = fun items -> canAccessHeatedNorfair items &&
+                                         canHellRunSix items;
             };
             {
                 Area = LowerNorfair;
@@ -666,7 +797,8 @@ module Locations =
                 Class = Minor;
                 Address = 0x78E6E;
                 Visibility = Visible;
-                Available = fun items -> canAccessLowerNorfair items && haveItem items SpaceJump;
+                Available = fun items -> canAccessLowerNorfair items &&
+                                         haveItem items SpaceJump;
             };
             {
                 Area = LowerNorfair;
@@ -682,7 +814,7 @@ module Locations =
                 Class = Minor;
                 Address = 0x78F30;
                 Visibility = Visible;
-                Available = fun items -> canPassWorstRoom items;
+                Available = fun items -> canAccessLowerNorfair items;
             };
             {
                 Area = LowerNorfair;
@@ -723,7 +855,8 @@ module Locations =
                 Address = 0x79108;
                 Visibility = Hidden;
                 Available = fun items -> canPassWorstRoom items &&
-                                         energyReserveCount items >= 2;
+                                         (haveItem items Charge ||
+                                             itemCount items Super >= 6);
             };
             {
                 Area = LowerNorfair;
@@ -755,9 +888,8 @@ module Locations =
                 Class = Major;
                 Address = 0x7C2E9;
                 Visibility = Chozo;
-                Available = fun items -> canAccessWs items &&
-                                         haveItem items SpeedBooster &&
-                                         (haveItem items Varia || haveItem items Gravity || energyReserveCount items >= 1);
+                Available = fun items -> canPassAttic items &&
+                                         haveItem items SpeedBooster;
             };
             {
                 Area = WreckedShip;
@@ -765,8 +897,7 @@ module Locations =
                 Class = Minor;
                 Address = 0x7C2EF;
                 Visibility = Visible;
-                Available = fun items -> canAccessWs items &&
-                                         (haveItem items Varia || haveItem items Gravity || energyReserveCount items >= 1);
+                Available = fun items -> canPassAttic items;
             };
             {
                 Area = WreckedShip;
@@ -774,7 +905,7 @@ module Locations =
                 Class = Minor;
                 Address = 0x7C319;
                 Visibility = Visible;
-                Available = fun items -> canAccessWs items;
+                Available = fun items -> canPassAttic items;
             };
             {
                 Area = WreckedShip;
@@ -782,13 +913,7 @@ module Locations =
                 Class = Major;
                 Address = 0x7C337;
                 Visibility = Visible;
-                Available = fun items -> canAccessWs items &&
-                                            (haveItem items Bomb ||
-                                             haveItem items PowerBomb ||
-                                             haveItem items HiJump ||
-                                             haveItem items SpaceJump ||
-                                             haveItem items SpeedBooster ||
-                                             haveItem items SpringBall);
+                Available = fun items -> canDefeatPhantoon items;
             };
             {
                 Area = WreckedShip;
@@ -796,7 +921,7 @@ module Locations =
                 Class = Minor;
                 Address = 0x7C357;
                 Visibility = Visible;
-                Available = fun items -> canAccessWs items;
+                Available = fun items -> canDefeatPhantoon items;
             };
             {
                 Area = WreckedShip;
@@ -804,7 +929,7 @@ module Locations =
                 Class = Major;
                 Address = 0x7C365;
                 Visibility = Visible;
-                Available = fun items -> canAccessWs items;
+                Available = fun items -> canDefeatPhantoon items;
             };
             {
                 Area = WreckedShip;
@@ -812,8 +937,7 @@ module Locations =
                 Class = Major;
                 Address = 0x7C36D;
                 Visibility = Chozo;
-                Available = fun items -> canAccessWs items &&
-                                         (haveItem items Varia || haveItem items Gravity || energyReserveCount items >= 1);
+                Available = fun items -> canPassAttic items;
             };
             {
                 Area = Maridia;
@@ -821,10 +945,11 @@ module Locations =
                 Class = Minor;
                 Address = 0x7C437;
                 Visibility = Visible;
-                Available = fun items -> canAccessRedBrinstar items &&
-                                         canUsePowerBombs items &&
+                Available = fun items -> canAccessOuterMaridia items &&
                                          haveItem items Gravity &&
-                                         haveItem items SpeedBooster;
+                                         haveItem items SpeedBooster &&
+                                         haveItem items Morph;
+                                         //just get it first try!!
             };
             {
                 Area = Maridia;
@@ -840,10 +965,7 @@ module Locations =
                 Class = Major;
                 Address = 0x7C47D;
                 Visibility = Visible;
-                Available = fun items -> canAccessOuterMaridia items &&
-                                            (canFly items ||
-                                             haveItem items SpeedBooster ||
-                                             haveItem items Grapple);
+                Available = fun items -> canAccessOuterMaridia items;
             };
             {
                 Area = Maridia;
@@ -875,7 +997,9 @@ module Locations =
                 Class = Minor;
                 Address = 0x7C533;
                 Visibility = Visible;
-                Available = fun items -> canAccessInnerMaridia items;
+                Available = fun items -> canAccessInnerMaridia items &&
+                                         (haveItem items Ice ||
+                                             haveItem items Gravity);
             };
             {
                 Area = Maridia;
@@ -884,10 +1008,12 @@ module Locations =
                 Address = 0x7C559;
                 Visibility = Chozo;
                 Available = fun items -> canDefeatDraygon items &&
-                                         (haveItem items SpeedBooster ||
-                                            (haveItem items Charge ||
-                                             haveItem items ScrewAttack) &&
-                                            (canFly items || haveItem items HiJump));
+                                         (haveItem items ScrewAttack ||
+                                            haveItem items Plasma ||
+                                            (haveItem items Charge &&
+                                                ((haveItem items Varia &&
+                                                    energyReserveCount items >= 5) ||
+                                                    (energyReserveCount items >= 10))));
             };
             {
                 Area = Maridia;
@@ -919,8 +1045,7 @@ module Locations =
                 Class = Minor;
                 Address = 0x7C5F1;
                 Visibility = Visible;
-                Available = fun items -> canAccessOuterMaridia items &&
-                                         haveItem items Gravity;
+                Available = fun items -> canAccessInnerMaridia items;
             };
             {
                 Area = Maridia;
@@ -928,8 +1053,9 @@ module Locations =
                 Address = 0x7C603;
                 Class = Minor;
                 Visibility = Visible;
-                Available = fun items -> canAccessOuterMaridia items &&
-                                         haveItem items Gravity;
+                Available = fun items -> canAccessInnerMaridia items &&
+                                         haveItem items Gravity &&
+                                         haveItem items SpeedBooster;
             };
             {
                 Area = Maridia;
@@ -937,8 +1063,9 @@ module Locations =
                 Class = Minor;
                 Address = 0x7C609;
                 Visibility = Visible;
-                Available = fun items -> canAccessOuterMaridia items &&
-                                         haveItem items Gravity;
+                Available = fun items -> canAccessInnerMaridia items &&
+                                         haveItem items Gravity &&
+                                         haveItem items SpeedBooster;
             };
             {
                 Area = Maridia;
@@ -946,9 +1073,12 @@ module Locations =
                 Class = Major;
                 Address = 0x7C6E5;
                 Visibility = Chozo;
-                Available = fun items -> canAccessOuterMaridia items &&
-                                         (haveItem items Gravity || (haveItem items SpringBall && haveItem items HiJump && haveItem items Ice)) &&
-                                         (haveItem items Ice || haveItem items Grapple);
+                Available = fun items -> canAccessInnerMaridia items &&
+                                         haveItem items Grapple &&
+                                         (haveItem items HiJump ||
+                                            haveItem items Gravity);
+                                         // pb implied by inner maridia
+                                         // climbing evir rooms needs gravity
             };
             {
                 Area = Maridia;
