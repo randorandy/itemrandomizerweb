@@ -1,4 +1,4 @@
-# Super Metroid Item Randomizer for ROTATION
+# Super Metroid Item Randomizer for otherRotation
 
 ROMs created with this tool must be rotated with strotlog's web tool here:
 [https://strotlog.github.io/romhackizer/](https://strotlog.github.io/romhackizer/)
