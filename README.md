@@ -1,27 +1,29 @@
 # Super Metroid Item Randomizer for ROTATION
 
 ROMs created with this tool must be rotated with strotlog's web tool here:
-* https://strotlog.github.io/randoxrotation/
+[https://strotlog.github.io/romhackizer/](https://strotlog.github.io/romhackizer/)
 
-There is casual and tournament (hard) logic now!
+There is casual, expert and master logic!
 
 * How I use:
 * console: dotnet run
 * browser: localhost:8888
 
-Notes about casual logic:
-* The first four available locations that require nothing else are Morph, Ceiling E, Beta Missle, and 230 missile. Later morph can be made available with early screw.
-* Basic hellruns can be required, but a screen's worth of lava requires varia and E.
-* Acid always allows both suits to be available. This *should* never put a suit in acid, but I have seen unintended exceptions.
-* Suitless Maridia consists of getting to Mama Turtle and Crab Supers with Hi Jump and no Gravity. For the rest of Maridia, Gravity will be available.
-* Lower Norfair will always require Varia, Gravity, Space Jump, and Screw attack. Therefore, it is intended that those items will not appear in LN.
-* Infinite bomb jumping is presumed, and can be an intended escape from rooms such as Phantoon. Underwater bomb jumping is not logically required.
+Casual:
+No hellruns or suitless maridia will be required. Wrecked ship can be accessed with HJB or Space+Gravity.
+The only required techniques will be:
+-regular walljumping
+-infinite bomb jump
+-1-tap short charge, which I think is required for Main St. Missile and WS Reserve. It also allows frog speedway spark.
 
-Notes about tournament logic:
-* Most things that are possible in rotation can be in logic
-* Acid/lava baths can be in logic
-* Full suitless Lower Norfair is in logic
-* Underwater suitless walljumps and suitless IBJ are in logic
-* NO door clips, X-Ray climbs, or OOB are in logic
+Expert:
+Hellruns and suitless maridia can be required.
+Hellruns were tested to my ability level +1 tank.
+Not all of the hardest techniques will be in logic.
+Most notably, suitless walljumping without HJB for more than a screen is not required.
+
+
+Master:
+All hard tricks and items I was able to obtain with minimal loadout are in logic. Hellruns were tested to my ability.
 
 Removed total's text from the readme
